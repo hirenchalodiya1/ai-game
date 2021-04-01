@@ -1,0 +1,31 @@
+WIDTH = 570
+HEIGHT = 726
+FPS = 40
+ANI = 4
+PLAYER_RADIUS = 10
+BALL_RADIUS = 5
+MINIMUM_ASSISTANCE = 1
+
+
+# Goal Post
+class GOAL_POST:
+    LEFT = 241 + BALL_RADIUS
+    RIGHT = 334 - BALL_RADIUS
+    Y = 33
+
+
+# Inner fox for player who has radius 15
+class INNER_BOX:
+    LEFT = 90 + PLAYER_RADIUS
+    RIGHT = 464 - PLAYER_RADIUS
+    UP = 37 + PLAYER_RADIUS
+    DOWN = 173 - PLAYER_RADIUS
+
+
+# Outer box for player who has radius 15
+class OUTER_BOX:
+    LEFT = 30 + PLAYER_RADIUS
+    RIGHT = 541 - PLAYER_RADIUS
+    CENTER_X = (30 + 541) // 2
+    UP = 177 + PLAYER_RADIUS
+    DOWN = 360 - PLAYER_RADIUS
