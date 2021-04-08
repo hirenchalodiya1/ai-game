@@ -1,9 +1,10 @@
+from enum import Enum
 import pygame
 import math
 from sympy import intersection, Segment, Point
 from agent import RedTeam, BlueTeam
 from ball import Ball
-from constats import OUTER_BOX, PLAYER_RADIUS, GOAL_POST, WIDTH, HEIGHT
+from constats import OUTER_BOX, PLAYER_RADIUS, GOAL_POST, WIDTH, HEIGHT, FPS
 from utils import shortest_n_paths
 
 
@@ -186,6 +187,12 @@ class GameState:
         return paths[0]
 
 
+class GameDisplayState(Enum):
+    TANGENTS = 1
+    SHOOTS_AVAILABLE = 2
+    SHOOT = 3
+
+
 class Game:
     screen = None
     clock = None
@@ -195,6 +202,7 @@ class Game:
     state = None
     optimal_path = []
     path_frame_counter = 0
+    display_state = GameDisplayState.TANGENTS
 
     def __init__(self, screen, clock):
         self.screen = screen
@@ -224,44 +232,15 @@ class Game:
         self.blue_team.draw(self.screen)
         pygame.display.update()
 
-    def clear(self):
-        self.display_ground()
-        self.spawn_player()
-
     def display_ground(self):
         # Background image
         bg = pygame.image.load('bg.png').convert()
         self.screen.blit(bg, [0, 0])
         pygame.display.flip()
 
-    def show_shots(self):
-        # show tangents
-        print("Showing agent's decision making...")
-        tangent_surface = pygame.Surface([WIDTH, HEIGHT], pygame.SRCALPHA)
-        for t in self.state.tangents:
-            pygame.draw.line(tangent_surface, 'white', t[0], t[1])
-        self.screen.blit(tangent_surface, [0, 0])
-        pygame.display.update()
-        self.clock.tick(1)  # to overcome time consumed used while calculating sight and shoot
-        self.clock.tick(1)
-
-        self.clear()
-
-        # showing sights
-        print("Showing shots selected by agent...")
-        shots_surface = pygame.Surface([WIDTH, HEIGHT], pygame.SRCALPHA)
-
-        for p1, p_set in self.state.sight.items():
-            for p2 in p_set:
-                pygame.draw.line(shots_surface, 'pink', p1.vector, p2.vector)
-
-        # # showing direct shoots
-        for p1, point in self.state.direct_shoot.items():
-            pygame.draw.line(shots_surface, 'pink', p1.vector, point)
-
-        self.screen.blit(shots_surface, [0, 0])
-        pygame.display.update()
-        self.clock.tick(1)
+    def clear(self):
+        self.display_ground()
+        self.spawn_player()
 
     def render_path(self, path):
         points = []
@@ -281,6 +260,7 @@ class Game:
         self.render_path(path_point)
 
     def start(self):
+        pygame.init()
         self.display_ground()
         self.print_player_info()
         self.spawn_player()
@@ -288,10 +268,54 @@ class Game:
         print("Game Started")
         self.pre_process()
 
-        self.show_shots()
-        print("Rendering path...")
+    def show_tangents(self):
+        # show tangents for first time then do not change display
+        if self.path_frame_counter == 0:
+            print("Showing agent's decision making...")
+            self.clear()
+            tangent_surface = pygame.Surface([WIDTH, HEIGHT], pygame.SRCALPHA)
+            for t in self.state.tangents:
+                pygame.draw.line(tangent_surface, 'white', t[0], t[1])
+            self.screen.blit(tangent_surface, [0, 0])
+            pygame.display.update()
 
-    def next_frame(self):
+        if self.path_frame_counter < 2 * FPS:
+            self.path_frame_counter += 1
+        else:
+            # renew counter and change state
+            self.path_frame_counter = 0
+            self.display_state = GameDisplayState.SHOOTS_AVAILABLE
+
+    def show_shots(self):
+        # show shots for first time then do not change display
+        if self.path_frame_counter == 0:
+            print("Showing shots selected by agent...")
+            self.clear()
+            shots_surface = pygame.Surface([WIDTH, HEIGHT], pygame.SRCALPHA)
+
+            # showing passing
+            for p1, p_set in self.state.sight.items():
+                for p2 in p_set:
+                    pygame.draw.line(shots_surface, 'pink', p1.vector, p2.vector)
+
+            # # showing direct shoots
+            for p1, point in self.state.direct_shoot.items():
+                pygame.draw.line(shots_surface, 'pink', p1.vector, point)
+
+            self.screen.blit(shots_surface, [0, 0])
+            pygame.display.update()
+
+        if self.path_frame_counter < 2 * FPS:
+            self.path_frame_counter += 1
+        else:
+            # renew counter and change state
+            self.path_frame_counter = 0
+            self.display_state = GameDisplayState.SHOOT
+
+    def shoot(self):
+        if self.path_frame_counter == 0:
+            print("Rendering path...")
+
         # update ball position till we have
         if self.path_frame_counter < len(self.optimal_path):
             self.clear()
@@ -303,3 +327,13 @@ class Game:
         else:
             self.clock.tick(2)
             pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+    def next_frame(self):
+        if self.display_state == GameDisplayState.TANGENTS:
+            self.show_tangents()
+        elif self.display_state == GameDisplayState.SHOOTS_AVAILABLE:
+            self.show_shots()
+        elif self.display_state == GameDisplayState.SHOOT:
+            self.shoot()
+        else:
+            raise ValueError("Unknown display state")

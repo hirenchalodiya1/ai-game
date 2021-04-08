@@ -13,7 +13,6 @@ def main():
 
     # Caption
     pygame.display.set_caption("Let’s Play Soccer")
-    pygame.init()
 
     # Start game
     game = Game(ground, clock)
