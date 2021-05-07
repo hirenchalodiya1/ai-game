@@ -20,7 +20,7 @@
   
 ## Run
 ```
-python3 main.py -n 1001 -x 1000
+python3 main.py -n 1001 -x 1000 -p
 ```
 
 ## Layout
