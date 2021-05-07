@@ -4,7 +4,6 @@ import time
 import os
 from game import Directions
 
-
 ###########################
 #  GRAPHICS DISPLAY CODE  #
 ###########################
@@ -168,9 +167,9 @@ class GameGraphics:
             tempState = agentState.copy()
             tempState.configuration = agentState.jump
             self.animateAgent(tempState, prevState, prevImage)
-            prevState = tempState
-
-        self.animateAgent(agentState, prevState, prevImage)
+            # prevState = tempState
+        else:
+            self.animateAgent(agentState, prevState, prevImage)
 
         self.infoPane.updateScore(newState.score)
 
@@ -405,10 +404,8 @@ class GameGraphics:
         s_x, s_y = self.to_screen(position)
         coords = []
         for x, y in POWER_SHAPE:
-            # x += 0.5
-            # y += 0.5
             coords.append((x * constant + s_x, y * constant + s_y))
-        polygon(coords, POWER_COLOR, filled=1, smoothed=0)
+        polygon(coords, formatColor(0, 0, 0), POWER_COLOR, filled=1, smoothed=0)
 
     def drawRestart(self, objects):
         constant = self.gridSize * RESTART_SCALE

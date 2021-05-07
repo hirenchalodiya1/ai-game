@@ -131,6 +131,7 @@ def draw_background():
 def _destroy_window(event=None):
     sys.exit(0)
 
+
 def end_graphics():
     global _root_window, _canvas, _mouse_enabled
     try:
@@ -360,7 +361,8 @@ def move_to(object, x, y=None, d_o_e=lambda arg: _root_window.tk.dooneevent(arg)
     d_o_e(d_w)
 
 
-def move_by(object, x, y=None, d_o_e=lambda arg: _root_window.tk.dooneevent(arg), d_w=tkinter._tkinter.DONT_WAIT, lift=False):
+def move_by(object, x, y=None, d_o_e=lambda arg: _root_window.tk.dooneevent(arg), d_w=tkinter._tkinter.DONT_WAIT,
+            lift=False):
     if y is None:
         try:
             x, y = x
