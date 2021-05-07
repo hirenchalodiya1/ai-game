@@ -1,5 +1,8 @@
 # Reinforcement Learning
 
+## Submitted by
+### Name: Hiren Chalodiya <hirenchalodiya99@gmail.com>
+
 ## Requirement
 - ![Python 3.x](https://img.shields.io/badge/Python-3.x-blue.svg)
 - Tkinter (python 3.x supported version)
