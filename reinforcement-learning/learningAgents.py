@@ -190,7 +190,7 @@ class ReinforcementAgent(ValueEstimationAgent):
 
     def final(self, state):
         """
-          Called by Pacman game at the terminal state
+          Called by game at the terminal state
         """
         deltaReward = state.getScore() - self.lastState.getScore()
         self.observeTransition(self.lastState, self.lastAction, state, deltaReward)

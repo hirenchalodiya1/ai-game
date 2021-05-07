@@ -44,7 +44,7 @@ def readCommand(argv):
                       metavar='LAYOUT_FILE', default='classic')
     parser.add_option('-a', '--agent', dest='agent',
                       help=default('the agent TYPE in the Agents module to use'),
-                      metavar='TYPE', default='RAQ')
+                      metavar='TYPE', default='QA')
     parser.add_option('-t', '--textGraphics', action='store_true', dest='textGraphics',
                       help='Display output as text only', default=False)
     parser.add_option('-q', '--quietTextGraphics', action='store_true', dest='quietGraphics',
