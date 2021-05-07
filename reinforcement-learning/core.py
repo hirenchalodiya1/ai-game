@@ -110,16 +110,8 @@ class GameState:
     GameStates are used by the Game object to capture the actual state of the game and
     can be used by agents to reason about the game.
 
-    Much of the information in a GameState is stored in a GameStateData object.  We
-    strongly suggest that you access that data via the accessor methods below rather
-    than referring to the GameStateData object directly.
-
-    Note that in classic Pacman, Pacman is always agent 0.
+    Much of the information in a GameState is stored in a GameStateData object
     """
-
-    ####################################################
-    # Accessor methods: use these to access state data #
-    ####################################################
 
     # static variable keeps track of which states have had getLegalActions called
     explored = set()
@@ -132,18 +124,12 @@ class GameState:
     getAndResetExplored = staticmethod(getAndResetExplored)
 
     def getLegalActions(self):
-        """
-        Returns the legal actions for the agent specified.
-        """
         if self.isWin():
             return []
 
         return AgentRules.getLegalActions(self)
 
     def generateSuccessor(self, action):
-        """
-        Returns the successor state after the specified agent takes the action.
-        """
         # Check that successors exist
         if self.isWin():
             raise Exception('Can\'t generate a successor of a terminal state.')
@@ -167,18 +153,9 @@ class GameState:
         return self.getLegalActions()
 
     def generateAgentSuccessor(self, action):
-        """
-        Generates the successor state after the specified pacman move
-        """
         return self.generateSuccessor(action)
 
     def getAgentState(self):
-        """
-        Returns an AgentState object for pacman (in game.py)
-
-        state.pos gives the current position
-        state.direction gives the travel vector
-        """
         return self.data.agentState.copy()
 
     def getAgentPosition(self):
@@ -210,11 +187,6 @@ class GameState:
 
     def isWin(self):
         return self.data._win
-
-    #############################################
-    #             Helper methods:               #
-    # You shouldn't need to call these directly #
-    #############################################
 
     def __init__(self, prevState=None):
         """

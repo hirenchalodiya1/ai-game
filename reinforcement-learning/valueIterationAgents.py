@@ -3,6 +3,7 @@ import util
 from learningAgents import ValueEstimationAgent
 
 
+# TODO: Make default MDP class inherited from mdp.py
 class ValueIterationAgent(ValueEstimationAgent):
     """
         * Please read learningAgents.py before reading this.*
@@ -32,7 +33,6 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.values = util.Counter()  # A Counter is a dict with default 0
         self.actions = {state: None for state in self.mdp.getStates()}
         # Write value iteration code here
-        "*** YOUR CODE HERE ***"
         for _ in range(self.iterations):
             next_values = util.Counter()
             for state in self.mdp.getStates():
@@ -56,7 +56,6 @@ class ValueIterationAgent(ValueEstimationAgent):
           Compute the Q-value of action in state from the
           value function stored in self.values.
         """
-        "*** YOUR CODE HERE ***"
         qvalue = 0
         for nextState, prob in self.mdp.getTransitionStatesAndProbs(state, action):
             qvalue += prob * (self.mdp.getReward(state, action, nextState) + self.discount * self.values[nextState])
@@ -71,7 +70,6 @@ class ValueIterationAgent(ValueEstimationAgent):
           there are no legal actions, which is the case at the
           terminal state, you should return None.
         """
-        "*** YOUR CODE HERE ***"
         return self.actions[state]
 
     def getPolicy(self, state):

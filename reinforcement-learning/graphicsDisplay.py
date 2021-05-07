@@ -8,11 +8,8 @@ from game import Directions
 #  GRAPHICS DISPLAY CODE  #
 ###########################
 
-# Most code by Dan Klein and John Denero written
-# Some code from a by LiveWires, and used / modified with permission.
-
 DEFAULT_GRID_SIZE = 50.0
-BACKGROUND_COLOR = formatColor(1, 1, 1)
+BACKGROUND_COLOR = formatColor(0, 0, 0)
 
 # info pane
 INFO_PANE_HEIGHT = 35

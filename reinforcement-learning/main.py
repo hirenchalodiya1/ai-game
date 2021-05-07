@@ -4,6 +4,7 @@ import sys
 
 import layout
 from core import ClassicGameRules
+from game import Directions
 
 
 def default(string):
@@ -26,7 +27,7 @@ def parseAgentArgs(string):
 
 def readCommand(argv):
     """
-    Processes the command used to run pacman from the command line.
+    Processes the command used to run from the command line.
     """
     from optparse import OptionParser
     usageStr = """
@@ -66,6 +67,8 @@ def readCommand(argv):
                       help='Turns on exception handling and timeouts during games', default=False)
     parser.add_option('--timeout', dest='timeout', type='int',
                       help=default('Maximum length of time an agent can spend computing in a single game'), default=30)
+    parser.add_option('-p', '--pathPrint', dest='pathPrint', action='store_true',
+                      help="Print path cost and followed path", default=False)
 
     options, otherjunk = parser.parse_args(argv)
     if len(otherjunk) != 0:
@@ -74,7 +77,7 @@ def readCommand(argv):
 
     # Fix the random seed
     if options.fixRandomSeed:
-        random.seed('cs188')
+        random.seed('hiren-chalodiya')
 
     # Choose a layout
     args['layout'] = layout.getLayout(options.layout)
@@ -112,6 +115,7 @@ def readCommand(argv):
     args['record'] = options.record
     args['catchExceptions'] = options.catchExceptions
     args['timeout'] = options.timeout
+    args['pathPrint'] = options.pathPrint
 
     # Special case: recorded games don't use the runGames method or args structure
     if options.gameToReplay is not None:
@@ -166,12 +170,14 @@ def replayGame(layout, actions, display):
     display.finish()
 
 
-def runGames(layout, agent, display, numGames, record, numTraining=0, catchExceptions=False, timeout=30):
+def runGames(layout, agent, display, numGames, record, pathPrint, numTraining=0, catchExceptions=False, timeout=30):
     import __main__
     __main__.__dict__['_display'] = display
 
     rules = ClassicGameRules(timeout)
     games = []
+
+    printKnowledge = pathPrint
 
     for i in range(numGames):
         beQuiet = i < numTraining
@@ -185,8 +191,34 @@ def runGames(layout, agent, display, numGames, record, numTraining=0, catchExcep
             rules.quiet = False
         game = rules.newGame(layout, agent, gameDisplay, beQuiet, catchExceptions)
         game.run()
+
+        if printKnowledge and i == numTraining - 1:
+            if 'stateActionPair' in dir(agent):
+                positionDict: dict = dict()  # [UP, DOWN LEFT, RIGHT]
+                for key, value in game.agent.stateActionPair.items():
+                    state, action = key
+                    value = f"{value:.2f}"
+                    pos = state.data.agentState.configuration.pos
+                    if pos not in positionDict:
+                        positionDict[pos] = [None, None, None, None]
+                    if action == Directions.UP:
+                        positionDict[pos][0] = value
+                    if action == Directions.DOWN:
+                        positionDict[pos][1] = value
+                    if action == Directions.LEFT:
+                        positionDict[pos][2] = value
+                    if action == Directions.RIGHT:
+                        positionDict[pos][3] = value
+
+                print("Knowledge base: (Position: UP, DOWN, LEFT, RIGHT)")
+                for key, value in positionDict.items():
+                    print(f"\t{key}: {value}")
+                printKnowledge = False
+
         if not beQuiet:
             games.append(game)
+            if pathPrint:
+                print("\tPath followed: ", " ".join(game.moveHistory))
 
         if record and not beQuiet:
             import time

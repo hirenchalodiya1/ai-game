@@ -23,20 +23,18 @@ class ValueEstimationAgent(Agent):
 
     def __init__(self, alpha=1.0, epsilon=0.05, gamma=0.8, numTraining=10):
         """
-        Sets options, which can be passed in via the Pacman command line using -a alpha=0.5,...
+        Sets options, which can be passed in via the command line using -a alpha=0.5,...
         alpha    - learning rate
         epsilon  - exploration rate
         gamma    - discount factor
         numTraining - number of training episodes, i.e. no learning after these many episodes
         """
+        super().__init__()
         self.alpha = float(alpha)
         self.epsilon = float(epsilon)
         self.discount = float(gamma)
         self.numTraining = int(numTraining)
 
-    ####################################
-    #    Override These Functions      #
-    ####################################
     def getQValue(self, state, action):
         """
         Should return Q(state,action)
@@ -80,17 +78,10 @@ class ReinforcementAgent(ValueEstimationAgent):
             rather than a model
 
         What you need to know:
-                    - The environment will call
-                      observeTransition(state,action,nextState,deltaReward),
+                    - The environment will call observeTransition(state,action,nextState,deltaReward),
                       which will call update(state, action, nextState, deltaReward)
-                      which you should override.
-        - Use self.getLegalActions(state) to know which actions
-                      are available in a state
+        - Use self.getLegalActions(state) to know which actions are available in a state
     """
-
-    ####################################
-    #    Override These Functions      #
-    ####################################
 
     def update(self, state, action, nextState, reward):
         """
@@ -98,10 +89,6 @@ class ReinforcementAgent(ValueEstimationAgent):
                 observing a transition and reward
         """
         util.raiseNotDefined()
-
-    ####################################
-    #    Read These Functions          #
-    ####################################
 
     def getLegalActions(self, state):
         """
@@ -116,8 +103,6 @@ class ReinforcementAgent(ValueEstimationAgent):
             Called by environment to inform agent that a transition has
             been observed. This will result in a call to self.update
             on the same arguments
-
-            NOTE: Do *not* override or call this function
         """
         self.episodeRewards += deltaReward
         self.update(state, action, nextState, deltaReward)
@@ -159,7 +144,8 @@ class ReinforcementAgent(ValueEstimationAgent):
         gamma    - discount factor
         numTraining - number of training episodes, i.e. no learning after these many episodes
         """
-        if actionFn == None:
+        super(ReinforcementAgent, self).__init__(alpha, epsilon, gamma, numTraining)
+        if actionFn is None:
             actionFn = lambda state: state.getLegalActions()
         self.actionFn = actionFn
         self.episodesSoFar = 0
@@ -170,9 +156,6 @@ class ReinforcementAgent(ValueEstimationAgent):
         self.alpha = float(alpha)
         self.discount = float(gamma)
 
-    ################################
-    # Controls needed for Crawler  #
-    ################################
     def setEpsilon(self, epsilon):
         self.epsilon = epsilon
 
@@ -190,15 +173,12 @@ class ReinforcementAgent(ValueEstimationAgent):
         self.lastState = state
         self.lastAction = action
 
-    ###################
-    # Agent Specific  #
-    ###################
     def observationFunction(self, state):
         """
             This is where we ended up after our last action.
             The simulation should somehow ensure this is called
         """
-        if not self.lastState is None:
+        if self.lastState is not None:
             reward = state.getScore() - self.lastState.getScore()
             self.observeTransition(self.lastState, self.lastAction, state, reward)
         return state

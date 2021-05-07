@@ -4,10 +4,6 @@ import traceback
 import sys
 
 
-#######################
-# Parts worth reading #
-#######################
-
 class Agent:
     """
     An agent must define a getAction method, but may also define the
@@ -250,10 +246,6 @@ def reconstituteGrid(bitRep):
     width, height = bitRep[:2]
     return Grid(width, height, bitRepresentation=bitRep[2:])
 
-
-####################################
-# Parts you shouldn't have to read #
-####################################
 
 class Actions:
     """
@@ -576,9 +568,11 @@ class Game:
 
                     if move_time > self.rules.getMoveWarningTime():
                         self.totalAgentTimeWarning += 1
-                        sys.stderr.write("Agent took too long to make a move! This is warning %d" % self.totalAgentTimeWarning)
+                        sys.stderr.write(
+                            "Agent took too long to make a move! This is warning %d" % self.totalAgentTimeWarning)
                         if self.totalAgentTimeWarning > self.rules.getMaxTimeWarning:
-                            sys.stderr.write("Agent exceeded the maximum number of warnings: %d" % self.totalAgentTimeWarning)
+                            sys.stderr.write(
+                                "Agent exceeded the maximum number of warnings: %d" % self.totalAgentTimeWarning)
                             self.agentTimeout = True
                             self._agentCrash(quiet=True)
                             self.unmute()

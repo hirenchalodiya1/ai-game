@@ -29,7 +29,6 @@ class QLearningAgent(ReinforcementAgent):
         """You can initialize Q-values here..."""
         ReinforcementAgent.__init__(self, **args)
 
-        "*** YOUR CODE HERE ***"
         self.stateActionPair = util.Counter()  # {(state, action): value}}
 
     def getQValue(self, state, action):
@@ -38,7 +37,6 @@ class QLearningAgent(ReinforcementAgent):
           Should return 0.0 if we have never seen a state
           or the Q node value otherwise
         """
-        "*** YOUR CODE HERE ***"
         return self.stateActionPair[(state, action)]
 
     def computeValueFromQValues(self, state):
@@ -48,7 +46,6 @@ class QLearningAgent(ReinforcementAgent):
           there are no legal actions, which is the case at the
           terminal state, you should return a value of 0.0.
         """
-        "*** YOUR CODE HERE ***"
         if not self.getLegalActions(state):
             return 0.0
         maxValue = float('-inf')
@@ -62,7 +59,6 @@ class QLearningAgent(ReinforcementAgent):
           are no legal actions, which is the case at the terminal state,
           you should return None.
         """
-        "*** YOUR CODE HERE ***"
         legalActions = self.getLegalActions(state)
         if not legalActions:
             return None
@@ -77,14 +73,9 @@ class QLearningAgent(ReinforcementAgent):
           take the best policy action otherwise.  Note that if there are
           no legal actions, which is the case at the terminal state, you
           should choose None as the action.
-
-          HINT: You might want to use util.flipCoin(prob)
-          HINT: To pick randomly from a list, use random.choice(list)
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        action = None
-        "*** YOUR CODE HERE ***"
         if util.flipCoin(self.epsilon):
             return random.choice(legalActions)
         else:
@@ -99,7 +90,6 @@ class QLearningAgent(ReinforcementAgent):
           NOTE: You should never call this function,
           it will be called on your behalf
         """
-        "*** YOUR CODE HERE ***"
         qThis = self.getQValue(state, action)
         qNext = self.getValue(nextState)
         self.stateActionPair[(state, action)] = (1 - self.alpha) * qThis + self.alpha * (reward + self.discount * qNext)
